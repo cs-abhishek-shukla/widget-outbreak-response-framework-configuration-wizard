@@ -463,6 +463,7 @@
                 _activeErrorTab('Fortinet FortiAnalyzer', huntToolIndex);
                 loadActiveTab(huntToolIndex);
                 $scope.toggleSelectConfiguration.open = true;
+                return;
             }
             if (!CommonUtils.isUndefined(threatHuntConfigForm.fazForm) && threatHuntConfigForm.fazForm.$invalid) {
                 _connectorErrorHandling('Fortinet FortiAnalyzer');
