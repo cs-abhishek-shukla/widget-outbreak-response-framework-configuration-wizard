@@ -58,7 +58,6 @@
         $scope.noDefaultConnectorSelected = false;
         $scope.config = config;
         $scope.connectorTypeList = ['Self', 'Agent'];
-        $scope.config.connectorType = 'Self';
         $scope.allConfigurations = [];
         const nistConnectorName = 'NIST National Vulnerability Database';
         const skipHealthCheckForConnectors = [nistConnectorName , 'Fortinet FortiAnalyzer'];
@@ -455,15 +454,12 @@
         }
 
         function nextNotification(threatHuntConfigForm) {
-            if(threatHuntConfigForm.selectConfigForm && (threatHuntConfigForm.selectConfigForm.$invalid || threatHuntConfigForm.selectConfigForm.$pristine)){
+            if(!$scope.config.selectedConfig && threatHuntConfigForm.selectConfigForm && (threatHuntConfigForm.selectConfigForm.$invalid || threatHuntConfigForm.selectConfigForm.$pristine)){
                 toaster.error({
-                    body: 'Select atleast one configuration for Fortinet FortiAnalyzer'
-                });
-                var huntToolIndex = $scope.selectedEnv.huntTools.indexOf('Fortinet FortiAnalyzer');
-                _activeErrorTab('Fortinet FortiAnalyzer', huntToolIndex);
-                loadActiveTab(huntToolIndex);
-                $scope.toggleSelectConfiguration.open = true;
-                return;
+                     body: 'Select atleast one configuration for Fortinet FortiAnalyzer'
+                 });
+                 _defaultConfigurationError();
+                 return;
             }
             if (!CommonUtils.isUndefined(threatHuntConfigForm.fazForm) && threatHuntConfigForm.fazForm.$invalid) {
                 _connectorErrorHandling('Fortinet FortiAnalyzer');
@@ -482,6 +478,19 @@
                 _checkConnectorHealth();
             }
 
+        }
+
+        function _defaultConfigurationError(){
+            var huntToolIndex = $scope.selectedEnv.huntTools.indexOf('Fortinet FortiAnalyzer');
+            _activeErrorTab('Fortinet FortiAnalyzer', huntToolIndex);
+            $scope.toggleConnectorConfigSettings = { open: false };
+            $scope.toggleParametersSettings = { open: false };
+            $scope.toggleSelectConfiguration = { open : true };
+            
+            $scope.params = {
+                activeTab: huntToolIndex
+            };
+            $scope.selectedConnectorName = $scope.installedConnectors[huntToolIndex].label;
         }
 
         function _connectorErrorHandling(threatHuntTool) {
@@ -528,9 +537,9 @@
                 }
                 if($scope.config.fazConnectorHealth && $scope.config.fazConnectorHealth.status !== 'Available'){
                     toaster.error({
-                        body: `Check health of default configuration.`
+                        body: `Check health failed for Fortinet FortiAnalyzer: ${$scope.config.selectedConfig.name}`
                     });
-                    $scope.toggleSelectConfiguration.open = true;
+                    _defaultConfigurationError();
                     return;
                 }
                 WizardHandler.wizard('OutbreaksolutionpackWizard').next();
