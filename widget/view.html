@@ -1,6 +1,6 @@
 <!-- Copyright start
   MIT License
-  Copyright (c) 2024 Fortinet Inc
+  Copyright (c) 2025 Fortinet Inc
   Copyright end -->
 <link rel="stylesheet" type="text/css" href="{{widgetCSS}}" />
 <div class="modal-header">
@@ -15,10 +15,10 @@
       <div class="full-height overflow-auto">
         <div class="display-table fixed-table-layout full-height full-width">
           <div class="full-height display-table-cell vertical-align-middle">
-            <div class="col-md-6 display-flex" style="justify-content: center">
+            <div class="col-md-5 display-flex" style="justify-content: center">
               <img class="img-responsive step-image" src="{{startInfoGraphics}}">
             </div>
-            <div class="col-md-6 prerequisites-section padding-bottom-25 padding-left-0">
+            <div class="col-md-7 prerequisites-section padding-bottom-25 padding-left-0">
               <div class="font-size-30 muted-80 line-height-1">{{viewWidgetVars.START_PAGE_TITLE}}</div>
               <div
                 class="solid-border element-secondary-bgcolor padding-20 margin-top-md padding-top-md padding-bottom-md">
@@ -48,10 +48,10 @@
       <div class="full-height overflow-auto">
         <div class="display-table fixed-table-layout full-height full-width">
           <div class="full-height display-table-cell vertical-align-middle">
-            <div class="col-md-6 display-flex" style="justify-content: center">
+            <div class="col-md-5 display-flex" style="justify-content: center">
               <img class="img-responsive step-image" src="{{selectThreadHuntTool}}">
             </div>
-            <div class="col-md-6 prerequisites-section padding-bottom-25 padding-left-0">
+            <div class="col-md-7 prerequisites-section padding-bottom-25 padding-left-0">
               <div class="form-group margin-bottom-0">
                 <div class="font-size-30 muted-80 line-height-1">{{viewWidgetVars.SECOND_PAGE_TITLE}}</div>
                 <div
@@ -83,10 +83,9 @@
         id="solutionpack-configure-back-env-btn" data-ng-click="backStartPage()"><i
           class="fa fa-chevron-left margin-right-sm"></i>{{viewWidgetVars.SECOND_PAGE_BACK}}</button>
       <button type="button" class="btn btn-primary pull-right btn-sm margin-top-lg margin-right-lg"
-        data-ng-click="configHuntTool()"
-        data-ng-disabled="(selectedEnv.huntTools && selectedEnv.huntTools.length === 0)"
-        id="solutionpack-configure-env-next-btn">{{viewWidgetVars.SECOND_PAGE_NEXT}}<i
-          class="fa fa-chevron-right margin-left-sm"></i>
+        data-ng-click="configHuntTool()" data-ng-disabled="(selectedEnv.huntTools && selectedEnv.huntTools.length === 0) && !isConnectorsInstalled"
+        id="solutionpack-configure-env-next-btn">{{viewWidgetVars.SECOND_PAGE_NEXT}}<i class="fa margin-left-sm"
+          data-ng-class="isConnectorsInstalled ? 'fa-spin fa-spinner' : 'fa-chevron-right'"></i>
       </button>
     </div>
   </wz-step>
@@ -98,200 +97,203 @@
             <div class="full-height display-table-cell vertical-align-middle">
               <div class="display-flex full-width overflow-auto solutionpack-wizard-modal-body wz-step-height">
                 <uib-tabset active="params.activeTab" class="margin-top-11 width-100pt">
-                  <uib-tab data-ng-repeat="huntTool in selectedEnv.huntTools track by $index" index="$index"
-                    heading="{{ huntTool }}" data-ng-click="loadActiveTab($index ,huntTool)">
+                  <uib-tab data-ng-repeat="huntTool in installedConnectors track by $index" index="$index"
+                    heading="{{ huntTool.label }}" data-ng-click="loadActiveTab($index)">
                     <div class="container full-width">
-                      <div class="col-md-6 display-flex align-items-center">
+                      <div class="col-md-5 display-flex align-items-center">
                         <div class="full-width info-graphic-margin">
                           <img class="img-responsive" src="{{threatHuntToolConfig}}">
                         </div>
                       </div>
-                      <div class="col-md-6 padding-left-0 prerequisites-section">
-                        <div class="font-size-30 line-height-1 margin-bottom-lg margin-top-18 muted-80">
-                          {{viewWidgetVars.THIRD_PAGE_TITLE}}{{ huntTool }}</div>
-                        <div class="form-group">
-                          <uib-accordion>
-                            <div uib-accordion-group id="accordion-connector-config-{{ $index }}" class="panel-default"
-                              is-open="true">
-                              <uib-accordion-heading>
-                                <div ng-click="toggleConnectorConfigSettings($index)"
-                                  data-ng-class="{'queue-text-active-color': toggleConnectorConfig[$index]}">
-                                  <div class="margin-right-lg pull-left"><span class="queue-card-actions">&nbsp;<i
-                                        class="fa {{ toggleConnectorConfig[$index] ? 'fa-chevron-down' : 'fa-chevron-right'}}"></i></span>
+                      <div class="col-md-7 padding-left-0 prerequisites-section">
+                        <form name="outbreakConfigForm" data-ng-if="huntTool.label === selectedConnectorName">
+                          <div class="font-size-25 line-height-1 margin-bottom-lg margin-top-18 muted-80">
+                            {{viewWidgetVars.THIRD_PAGE_TITLE}}{{ huntTool.label }}</div>
+                          <div class="form-group">
+                            <uib-accordion close-others="true">
+                              <div uib-accordion-group class="panel-default"
+                                id="accordion-connector-config-{{ $index }}"
+                                is-open="toggleConnectorConfigSettings.open" style="width: 100%;">
+                                <uib-accordion-heading class="padding-md">
+                                  <div class="clearfix">
+                                    <div
+                                      data-ng-class="{'queue-text-active-color': toggleConnectorConfigSettings.open}">
+                                      <div class="margin-right-lg pull-left"><span class="queue-card-actions">&nbsp;<i
+                                            class="fa"
+                                            data-ng-class="toggleConnectorConfigSettings.open ? 'fa-chevron-down' : 'fa-chevron-right'"></i></span>
+                                      </div>
+                                      <div class="pull-left queue-card-header-text margin-right-3">
+                                        {{viewWidgetVars.THIRD_PAGE_TOGGLE_CONFIG}}
+                                      </div>
+                                    </div>
                                   </div>
-                                  <div class="pull-left queue-card-header-text margin-right-3">
-                                    {{viewWidgetVars.THIRD_PAGE_TOGGLE_CONFIG}}
+                                </uib-accordion-heading>
+                                <div ng-form="formHolder.connectorForm[$index]" name="formHolder.connectorForm[$index]">
+                                  <div id="outbreakConnectorWizard-{{$index}}"
+                                    class="margin-top-negative-20 margin-top-md padding-left-0 padding-right-0 threat-hunt-connector-config-width">
+                                    <div
+                                      data-ng-if="connectorReady[$index] && huntTool.label === selectedConnectorName">
+                                      <widget-outbreak-connector-configuration-component content-detail="huntTool"
+                                        configured-agents="connectorInstalledOnAgents[$index]"
+                                        close-panel="handleClose()" owners="owners" tab-index="$index">
+                                      </widget-outbreak-connector-configuration-component>
+                                    </div>
                                   </div>
-                                  <div class="clearfix"></div>
                                 </div>
-                              </uib-accordion-heading>
-                              <div class="row">
-                                <div class="col-md-12 col-sm-12">
-                                  <div class="mp-view-summary">
-                                    <div class="pull-left margin-left-sm margin-right-sm">
-                                      <div class="custom-installing-spinner-content muted-50 margin-top-12"
-                                        data-ng-if="contentDetail.status !== 'Installed'">
-                                        <div class="custom-installing-spinner-block">
-                                          <div class="custom-installing-spinner">
-                                            <i
-                                              class="icon icon-installing-loader custom-installing-icon fa fa-spin"></i>
+                              </div>
+
+                              <div uib-accordion-group class="panel-default" data-ng-if="huntTool.label==='Fortinet FortiAnalyzer'"
+                                id="accordion-connector-display-{{ $index }}" is-open="toggleSelectConfiguration.open" style="width: 100%;">
+                                <uib-accordion-heading class="padding-md">
+                                  <div class="clearfix">
+                                    <div data-ng-class="{'queue-text-active-color': toggleSelectConfiguration.open}">
+                                      <div class="margin-right-lg pull-left"><span class="queue-card-actions">&nbsp;<i class="fa"
+                                            data-ng-class="toggleSelectConfiguration.open ? 'fa-chevron-down' : 'fa-chevron-right'"></i></span>
+                                      </div>
+                                      <div class="pull-left queue-card-header-text margin-right-3">
+                                          Select Default Configuration for Outbreak Investigation
+                                      </div>
+                                    </div>
+                                  </div>
+                                </uib-accordion-heading>
+                                <div ng-form="selectConfigForm" name="selectConfigForm">
+                                  <div id="selectConfig"
+                                    class="margin-top-negative-20 margin-top-md padding-left-0 padding-right-0 threat-hunt-connector-config-width">
+                                    <div>
+                                      <div><label class="font-075em">Select Target</label><span class="required text-danger">*</span></div>
+                                      <div
+                                        data-ng-class="{ 'has-error':threatHuntConfigForm.selectConfigForm.$invalid || threatHuntConfigForm.selectConfigForm.$pristine}"
+                                        class="cs-select width-275">
+                                        <select id="targetSelect" name="targetSelect" class="form-control input-sm logic-type font-size-11"
+                                          data-ng-disabled="disabled" data-ng-model="config.connectorType"
+                                          data-ng-options="key for key in connectorTypeList" data-ng-change="setConnectorType()" required>
+                                          <option value="" disabled>{{'APP.LABEL.SELECT_AN_OPTION' | translate}}</option>
+                                        </select>
+                                        <span class="fa fa-sort-desc"></span>
+                                      </div>
+                                      <div data-ng-if="config.connectorType">
+                                        <div class="margin-top-lg"><label class="font-075em">Select Configuration</label><span
+                                          class="required text-danger">*</span></div>
+                                        <div class="display-flex">
+                                          <div
+                                            data-ng-class="{ 'has-error':threatHuntConfigForm.selectConfigForm.$invalid || threatHuntConfigForm.selectConfigForm.$pristine}"
+                                            class="cs-select width-275">
+                                            <select id="configurationSelect" name="configurationSelect"
+                                          class="form-control input-sm logic-type font-size-11" data-ng-disabled="disabled"
+                                          data-ng-model="config.selectedConfig"
+                                          data-ng-options="configuration as configuration.name for configuration in allConfigurations track by configuration.id"
+                                          data-ng-change="setConnectorConfiguration()" required>
+                                          <option value="" disabled>{{'APP.LABEL.SELECT_AN_OPTION' | translate}}</option>
+                                        </select>
+                                            <span class="fa fa-sort-desc"></span>
                                           </div>
-                                        </div>
-                                      </div>
-                                      <span data-ng-show="contentDetail.status === 'Failed'"
-                                        class="installing-failed-icon margin-top-8">
-                                        <i class="fa fa-exclamation-triangle fa-3x" aria-hidden="true"></i>
-                                      </span>
-                                      <div>
-                                        <img data-ng-if="contentDetail.iconLarge"
-                                          data-ng-src="{{contentDetail.iconLarge || contentDetail.icon_large}}"
-                                          alt="{{contentDetail.label || contentDetail.title}}" />
-                                        <i data-ng-if="!contentDetail.iconLarge"
-                                          class="mp-tile-icon {{contentDetail.type}}-tile-icon icon icon-{{contentDetail.type}}-card"></i>
-                                      </div>
-                                    </div>
-                                    <div class="pull-left margin-left-md mp-contentDetail-container">
-                                      <div class="display-flex">
-                                        <div class="mp-view-title text-overflow"
-                                          title="{{contentDetail.label || contentDetail.title}}">
-                                          {{contentDetail.label || contentDetail.title}}
-                                          <span data-ng-if="contentDetail.vendor_version"
-                                            class="mp-view-properties font-normal grey-text">v{{contentDetail.vendor_version}}</span>
-                                        </div>
-                                        <span class="preview-tag-horizontal top-0"
-                                          data-ng-if="contentDetail.featuredTags !== null && contentDetail.featuredTags.length > 0"
-                                          data-ng-style="{'background-color': contentDetail.featuredTags[0].color}"><span
-                                            class="featured-tag">{{contentDetail.featuredTags[0].tag}}</span></span>
-                                      </div>
-                                      <span class="mp-view-properties">
-                                        <span class="mp-view-properties grey-text">Version</span>
-                                        <span>{{contentDetail.version}}</span><span
-                                          data-ng-if="contentDetail.buildNumber">-{{contentDetail.buildNumber}}</span>
-                                      </span>
-                                      <p class="mp-view-properties margin-bottom-xsm"><span
-                                          class="grey-text">Certified:</span>
-                                        {{contentDetail.certified ? 'Yes':'No' }}</p>
-                                      <p class="mp-view-properties margin-bottom-sm"
-                                        data-ng-show="contentDetail.publisher !== ''">
-                                        <span class="grey-text">Publisher:</span>
-                                        <span class="mp-view-properties"
-                                          data-ng-show="(contentDetail.publisher | lowercase) === 'fortinet' || (contentDetail.publisher | lowercase) === 'cybersponse'">Fortinet
-                                        </span>
-                                        <span class="mp-view-properties"
-                                          data-ng-show="(contentDetail.publisher | lowercase) !== 'fortinet' && (contentDetail.publisher | lowercase) !== 'cybersponse'">{{contentDetail.publisher}}
-                                        </span>
-                                      </p>
-                                    </div>
-                                    <div class="pull-right display-inline-block">
-                                      <div class="mp-view-properties margin-top-sm">
-                                        <div class="row">
-                                          <div class="pull-right margin-right-sm">
-                                            <div
-                                              data-ng-show="contentDetail.infoContent.help_online || contentDetail.infoContent.help"
-                                              class="display-inline-block padding-top-xs">
-                                              <a id="administration-links"
-                                                data-ng-show="contentDetail.infoContent.help_online || contentDetail.infoContent.help"
-                                                href="{{contentDetail.infoContent.help_online || contentDetail.infoContent.help}}"
-                                                title="Visit for more details about this {{contentDetail.type}}"
-                                                target="_blank" rel="noopener noreferrer" class="btn btn-default">
-                                                <i class="icon icon-documentation margin-right-sm"></i>
-                                                Documentation
+                                          <!-- health check -->
+                                          <div class="content-detail-form" data-ng-show="config.selectedConfig">
+                                            <div class="content-detail-health margin-left-sm">
+                                              <span class="content-detail-health-check text-uppercase">
+                                            <i class="fa fa-stethoscope" aria-hidden="true"></i> {{'WZ_CONNECTOR.HEALTH_CHECK' |
+                                            translate}}:
+                                            <span>
+                                              <span data-ng-if="!healthCheckProcessing"
+                                                class="label-{{config.fazConnectorHealth.status | lowercase}}">
+                                                {{config.fazConnectorHealth.status}}
+                                              </span>
+                                              </span>
+                                              </span>
+                                              <a class="content-detail-refresh-icon" href="#" data-ng-click="checkFAZConnectorHealth()"
+                                                data-ng-class="{'pointer-event-none': healthCheckProcessing}">
+                                                <span class="fa icon icon-refresh" data-ng-class="{'fa-spin': healthCheckProcessing}"
+                                              title="{{'WZ_CONNECTOR.CHECK_HEALTH_STATUS' | translate}}"></span>
                                               </a>
+                                              <span class="content-detail-info-icon" data-uib-tooltip="{{config.fazConnectorHealth.message}}"
+                                            tooltip-class="break-word" data-tooltip-append-to-body="true">
+                                            <i class="icon icon-information"></i>
+                                          </span>
                                             </div>
                                           </div>
-                                          <div class="clearfix"></div>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
-                                  <div class="clearfix"></div>
                                 </div>
                               </div>
-                              <hr class="margin-0">
-                              <div ng-form="formHolder.connectorForm[$index]" name="formHolder.connectorForm[$index]">
-                                <div data-ng-if="selectedConnector" id="outbreakConnectorWizard-{{$index}}"
-                                  class="margin-top-negative-20 margin-top-md padding-left-0 padding-right-0 threat-hunt-connector-config-width"
-                                  data-ng-include="'widgets/installed/outbreakAlertConfiguration-2.1.0/widgetAssets/html/threatHuntIntegrationConfig.html'">
-                                </div>
-                                <div data-ng-show="selectedConnector" class="col-md-12 margin-top-18">
-                                  <button type="button" class="btn btn-primary"
-                                    data-ng-disabled="!(formHolder.connectorForm[$index].$valid && formHolder.connectorForm[$index].$dirty)"
-                                    data-ng-click="saveConnector($index)" id="submit-connector-config-{{$index}}"><i
-                                      class="icon icon-check margin-right-sm"></i>Save</button>
-                                </div>
-                              </div>
-                            </div>
-                          </uib-accordion>
-                        </div>
-                        <div data-ng-if="huntTool!=='NIST National Vulnerability Database'" class="form-group">
-                          <uib-accordion>
-                            <div uib-accordion-group id="accordion-params-config-{{ $index }}" class="panel-default">
-                              <uib-accordion-heading>
-                                <div ng-click="toggleAdvancedSettings($index)"
-                                  data-ng-class="{'queue-text-active-color': toggle[$index]}">
-                                  <div class="margin-right-lg pull-left"><span class="queue-card-actions">&nbsp;<i
-                                        class="fa {{ toggle[$index] ? 'fa-chevron-down' : 'fa-chevron-right'}}"></i></span>
+                              
+                              <div data-ng-if="huntTool.label!=='NIST National Vulnerability Database'"
+                                class="form-group">
+                                <div uib-accordion-group class="panel-default" id="accordion-params-config-{{ $index }}"
+                                  is-open="toggleParametersSettings.open" style="width: 100%;">
+                                  <uib-accordion-heading class="padding-md">
+                                    <div class="display-flex">
+                                      <div data-ng-class="{'queue-text-active-color': toggleParametersSettings.open}">
+                                        <div class="margin-right-lg pull-left"><span class="queue-card-actions">&nbsp;<i
+                                              class="fa"
+                                              data-ng-class="toggleParametersSettings.open ? 'fa-chevron-down' : 'fa-chevron-right'"></i></span>
+                                        </div>
+                                        <div class="pull-left queue-card-header-text margin-right-3">
+                                          {{viewWidgetVars.THIRD_PAGE_TOGGLE_PARAMS}}</div>
+                                      </div>
+                                    </div>
+                                  </uib-accordion-heading>
+                                  <div data-ng-if="huntTool.label==='Fortinet FortiAnalyzer'"
+                                    class="form-group margin-top-negative-20">
+                                    <p class="font-Size-13 muted">
+                                      <span>{{viewWidgetVars.THIRD_PAGE_FAZ_PARAMS}}</span>
+                                    </p>
+                                    <div ng-form="fazForm" name="fazForm">
+                                      <cs-connector-field-renderer data-cs-form="fazForm"
+                                        data-json-fields="threatHuntToolsParams.fazParams"
+                                        data-connector-data="{'config':fazForm.configuration}"
+                                        data-params="selectedEnv.threatHuntToolsParams.fazParams"
+                                        data-enable-record-fields="false" data-enable-jinja="false">
+                                      </cs-connector-field-renderer>
+                                    </div>
                                   </div>
-                                  <div class="pull-left queue-card-header-text margin-right-3">
-                                    {{viewWidgetVars.THIRD_PAGE_TOGGLE_PARAMS}}</div>
-                                  <div class="clearfix"></div>
-                                </div>
-                              </uib-accordion-heading>
-                              <div data-ng-if="huntTool==='Fortinet FortiAnalyzer'" class="form-group margin-top-sm">
-                                <p class="font-Size-13 muted">
-                                  <span>{{viewWidgetVars.THIRD_PAGE_FAZ_PARAMS}}</span>
-                                </p>
-                                <div ng-form="fazForm" name="fazForm">
-                                  <cs-connector-field-renderer data-cs-form="fazForm"
-                                    data-json-fields="threatHuntToolsParams.fazParams"
-                                    data-connector-data="{'config':fazForm.configuration}"
-                                    data-params="selectedEnv.threatHuntToolsParams.fazParams"
-                                    data-enable-record-fields="false" data-enable-jinja="false">
-                                  </cs-connector-field-renderer>
-                                </div>
-                              </div>
-                              <div data-ng-if="huntTool==='Fortinet FortiSIEM'" class="form-group margin-top-sm">
-                                <p class="font-Size-13 muted">
-                                  <span>{{viewWidgetVars.THIRD_PAGE_FSM_PARAMS}}</span>
-                                </p>
-                                <div ng-form="fsmForm" name="fsmForm">
-                                  <cs-connector-field-renderer data-cs-form="fsmForm"
-                                    data-json-fields="threatHuntToolsParams.fsmParams"
-                                    data-connector-data="{'config':fsmForm.configuration}"
-                                    data-params="selectedEnv.threatHuntToolsParams.fsmParams"
-                                    data-enable-record-fields="false" data-enable-jinja="false">
-                                  </cs-connector-field-renderer>
-                                </div>
-                              </div>
-                              <div data-ng-if="huntTool==='IBM QRadar'" class="form-group margin-top-sm">
-                                <p class="font-Size-13 muted">
-                                  <span>{{viewWidgetVars.THIRD_PAGE_QRADAR_PARAMS}}</span>
-                                </p>
-                                <div ng-form="qradarForm" name="qradarForm">
-                                  <cs-connector-field-renderer data-cs-form="qradarForm"
-                                    data-json-fields="threatHuntToolsParams.qRadarParams"
-                                    data-connector-data="{'config':qradarForm.configuration}"
-                                    data-params="selectedEnv.threatHuntToolsParams.qRadarParams"
-                                    data-enable-record-fields="false" data-enable-jinja="false">
-                                  </cs-connector-field-renderer>
-                                </div>
-                              </div>
-                              <div data-ng-if="huntTool==='Splunk'" class="form-group margin-top-sm">
-                                <p class="font-Size-13 muted">
-                                  <span>{{viewWidgetVars.THIRD_PAGE_SPLUNK_PARAMS}}</span>
-                                </p>
-                                <div ng-form="splunkForm" name="splunkForm">
-                                  <cs-connector-field-renderer data-cs-form="splunkForm"
-                                    data-json-fields="threatHuntToolsParams.splunkParams"
-                                    data-connector-data="{'config':splunkForm.configuration}"
-                                    data-params="selectedEnv.threatHuntToolsParams.splunkParams"
-                                    data-enable-record-fields="false" data-enable-jinja="false">
-                                  </cs-connector-field-renderer>
+                                  <div data-ng-if="huntTool.label==='Fortinet FortiSIEM'"
+                                    class="form-group margin-top-negative-20">
+                                    <p class="font-Size-13 muted">
+                                      <span>{{viewWidgetVars.THIRD_PAGE_FSM_PARAMS}}</span>
+                                    </p>
+                                    <div ng-form="fsmForm" name="fsmForm">
+                                      <cs-connector-field-renderer data-cs-form="fsmForm"
+                                        data-json-fields="threatHuntToolsParams.fsmParams"
+                                        data-connector-data="{'config':fsmForm.configuration}"
+                                        data-params="selectedEnv.threatHuntToolsParams.fsmParams"
+                                        data-enable-record-fields="false" data-enable-jinja="false">
+                                      </cs-connector-field-renderer>
+                                    </div>
+                                  </div>
+                                  <div data-ng-if="huntTool.label==='IBM QRadar'"
+                                    class="form-group margin-top-negative-20">
+                                    <p class="font-Size-13 muted">
+                                      <span>{{viewWidgetVars.THIRD_PAGE_QRADAR_PARAMS}}</span>
+                                    </p>
+                                    <div ng-form="qradarForm" name="qradarForm">
+                                      <cs-connector-field-renderer data-cs-form="qradarForm"
+                                        data-json-fields="threatHuntToolsParams.qRadarParams"
+                                        data-connector-data="{'config':qradarForm.configuration}"
+                                        data-params="selectedEnv.threatHuntToolsParams.qRadarParams"
+                                        data-enable-record-fields="false" data-enable-jinja="false">
+                                      </cs-connector-field-renderer>
+                                    </div>
+                                  </div>
+                                  <div data-ng-if="huntTool.label==='Splunk'" class="form-group margin-top-negative-20">
+                                    <p class="font-Size-13 muted">
+                                      <span>{{viewWidgetVars.THIRD_PAGE_SPLUNK_PARAMS}}</span>
+                                    </p>
+                                    <div ng-form="splunkForm" name="splunkForm">
+                                      <cs-connector-field-renderer data-cs-form="splunkForm"
+                                        data-json-fields="threatHuntToolsParams.splunkParams"
+                                        data-connector-data="{'config':splunkForm.configuration}"
+                                        data-params="selectedEnv.threatHuntToolsParams.splunkParams"
+                                        data-enable-record-fields="false" data-enable-jinja="false">
+                                      </cs-connector-field-renderer>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </uib-accordion>
-                        </div>
+                            </uib-accordion>
+                          </div>
+                        </form>
                       </div>
                     </div>
                   </uib-tab>
@@ -306,7 +308,7 @@
           id="solutionpack-configure-back-env-btn" data-ng-click="backSelectHuntTools()"><i
             class="fa fa-chevron-left margin-right-sm"></i>{{viewWidgetVars.THIRD_PAGE_BACK}}</button>
         <button type="button" class="btn btn-primary pull-right btn-sm margin-top-lg margin-right-lg"
-          data-ng-click="nextNotification(threatHuntConfigForm)" data-ng-disabled="isConnectorsHealthy"
+          data-ng-click="nextNotification(threatHuntConfigForm)" data-ng-disabled="isConnectorsHealthy || healthCheckProcessing"
           id="solutionpack-configure-env-next-btn">{{viewWidgetVars.THIRD_PAGE_NEXT}}<i class="fa margin-left-sm"
             data-ng-class="isConnectorsHealthy ? 'fa-spin fa-spinner' : 'fa-chevron-right'"></i>
         </button>
@@ -319,10 +321,10 @@
         <div class="full-height overflow-auto">
           <div class="display-table fixed-table-layout full-height full-width">
             <div class="full-height display-table-cell vertical-align-middle">
-              <div class="col-md-6 display-flex" style="justify-content: center">
+              <div class="col-md-5 display-flex" style="justify-content: center">
                 <img class="img-responsive step-image" src="{{threatTuntSchedule}}">
               </div>
-              <div class="col-md-6 prerequisites-section padding-bottom-25 padding-left-0">
+              <div class="col-md-7 prerequisites-section padding-bottom-25 padding-left-0">
                 <div class="form-group margin-bottom-0">
                   <div class="font-size-30 muted-80 line-height-1">{{viewWidgetVars.FOURTH_PAGE_TITLE}}</div>
                   <div ng-form="threatHuntWindowForm" name="threatHuntWindowForm">
@@ -391,34 +393,102 @@
         <div class="full-height overflow-auto">
           <div class="display-table fixed-table-layout full-height full-width">
             <div class="full-height display-table-cell vertical-align-middle">
-              <div class="col-md-6 display-flex" style="justify-content: center">
+              <div class="col-md-5 display-flex" style="justify-content: center">
                 <img class="img-responsive step-image" src="{{outbreakSettings}}">
               </div>
-              <div class="col-md-6 prerequisites-section padding-bottom-25 padding-left-0">
+              <div class="col-md-7 prerequisites-section padding-bottom-25 padding-left-0">
                 <div class="form-group margin-bottom-0">
                   <div class="font-size-30 muted-80 line-height-1">{{viewWidgetVars.FIFTH_PAGE_TITLE}}</div>
-                  <div
-                    class="solid-border element-secondary-bgcolor padding-20 margin-top-md padding-top-md padding-bottom-md">
-                    <div class="font-size-18 muted-80 line-height-1">{{viewWidgetVars.FIFTH_PAGE_SECTION_1_HEADING}}
-                    </div><br />
-                    <p class="font-Size-13 muted">
-                      <span>{{viewWidgetVars.FIFTH_PAGE_SECTION_1_DISCRIPTION_2}}</span>
-                    </p>
-                    <label for="fromSeverity" class="control-label">{{viewWidgetVars.FIFTH_PAGE_SECTION_2_SEVERITY}}
-                      <span data-uib-tooltip="{{viewWidgetVars.FIFTH_PAGE_SECTION_1_DISCRIPTION_1}}"
-                        data-tooltip-append-to-body="true"><i class="icon icon-information"></i></span></label>
-                    <div class="cs-select">
-                      <ui-select name="select_outbreak_type" id="select_outbreak_type"
-                        data-ng-model="selectedEnv.installOutbreakType" data-ng-required="true" multiple
-                        class="custom-multi-select" append-to-body="false">
-                        <ui-select-match placeholder="Select Severity...">{{$item}}
-                        </ui-select-match>
-                        <ui-select-choices
-                          repeat="option in outbreakAlertSeverityList | filter: $select.search | orderBy: 'item'"
-                          refresh-delay="200" ng-show="($select.items.length > 0) ||">
-                          <div ng-bind-html="option | highlight: $select.search"></div>
-                        </ui-select-choices>
-                      </ui-select>
+                  <div ng-form="autoInstallationForm" name="autoInstallationForm">
+                    <div
+                      class="solid-border element-secondary-bgcolor padding-20 margin-top-md padding-top-md padding-bottom-md">
+                      <div class="font-size-18 muted-80 line-height-1">{{viewWidgetVars.FIFTH_PAGE_SECTION_1_HEADING}}
+                      </div><br />
+                      <p class="font-Size-13 muted">
+                        <span>{{viewWidgetVars.FIFTH_PAGE_SECTION_1_DISCRIPTION_1}}</span>
+                      </p>
+                      <div class="radio">
+                        <div class="cs-radio-item margin-bottom-sm width-100pt">
+                          <input type="radio" id="installSelectedRadio" name="installSelectedRadio"
+                            data-ng-model="selectedEnv.autoInstallOutbreaks.installSelectedOutbreaks"
+                            data-ng-value="true">
+                          <label for="installSelectedRadio"
+                            class="radio-label muted">&nbsp;{{viewWidgetVars.FIFTH_PAGE_SECTION_1_LABLE_INSTALL_SELECTED}}</label>
+                          <div class="execution-content"
+                            data-ng-if="selectedEnv.autoInstallOutbreaks.installSelectedOutbreaks === true">
+                            <div data-ng-if="option.value !== 'none'" class="margin-bottom-md">
+                              <div class="comment-modification-container form-horizontal">
+                                <div
+                                  class="margin-left-md align-items-center muted font-size-13 margin-top-11 display-inline-flex">
+                                  {{viewWidgetVars.FIFTH_PAGE_SECTION_1_LAST_N_DAYS}}&nbsp;
+                                  <input type="text"
+                                    class="padding-left-sm padding-right-sm width-100px form-control height-30"
+                                    id="installOutbreaksFromLastXDays" name="installOutbreaksFromLastXDays"
+                                    data-ng-init="selectedEnv.autoInstallOutbreaks.installOutbreaksFromLastXDays = 30"
+                                    data-ng-model="selectedEnv.autoInstallOutbreaks.installOutbreaksFromLastXDays"
+                                    data-ng-pattern="onlyPositivenumbers" autocomplete="off"
+                                    data-ng-required="true" />&nbsp;
+                                  {{viewWidgetVars.FOURTH_PAGE_SECTION_1_PARAM_2}}<span
+                                    class="required text-danger">*</span>
+                                </div>
+                                <div class="error-msg-nday">
+                                  <div
+                                    data-ng-show="installationForm.autoInstallationForm.installOutbreaksFromLastXDays.$error.pattern"
+                                    class="font-size-12 text-danger">
+                                    {{viewWidgetVars.FOURTH_PAGE_SECTION_1_TOOLTIP_1}}</div>
+                                  <div
+                                    data-ng-show="installationForm.autoInstallationForm.installOutbreaksFromLastXDays.$error.required"
+                                    class="font-size-12 text-danger">
+                                    {{viewWidgetVars.FOURTH_PAGE_SECTION_1_TOOLTIP_2}}
+                                  </div>
+                                </div>
+                                <div
+                                  data-ng-class="{ 'has-error': selectedEnv.autoInstallOutbreaks.installOutbreakType.length===0 && installationForm.autoInstallationForm.OutbreakSeverities.$invalid && installationForm.autoInstallationForm.OutbreakSeverities.$touched }">
+                                  <div
+                                    class="cs-select margin-left-negative-10 display-flex align-items-center margin-top-12">
+                                    <label for="fromSeverity"
+                                      class="muted margin-right-md font-size-13">{{viewWidgetVars.FIFTH_PAGE_SECTION_1_SEVERITY}}<span
+                                        class="required text-danger">*</span><span
+                                        data-uib-tooltip="{{viewWidgetVars.FIFTH_PAGE_SECTION_1_SEVERITY_TOOLTIP}}"
+                                        data-tooltip-append-to-body="true"><i
+                                          class="margin-left-sm icon icon-information font-Size-13">
+                                        </i></span></label>
+                                    <ui-select name="OutbreakSeverities" id="OutbreakSeverities"
+                                      data-ng-model="selectedEnv.autoInstallOutbreaks.installOutbreakType"
+                                      data-ng-required="true" multiple class="custom-multi-select"
+                                      append-to-body="false">
+                                      <ui-select-match class="font-size-12"
+                                        placeholder="Select Severity...">{{$item}}</ui-select-match>
+                                      <ui-select-choices
+                                        repeat="option in outbreakAlertSeverityList | filter: $select.search | orderBy: 'item'"
+                                        refresh-delay="0" ng-show="($select.items.length > 0) ||">
+                                        <div ng-bind-html="option | highlight: $select.search"></div>
+                                      </ui-select-choices>
+                                    </ui-select>
+                                  </div>
+                                  <div
+                                    data-ng-show="selectedEnv.autoInstallOutbreaks.installOutbreakType.length===0 && installationForm.autoInstallationForm.OutbreakSeverities.$invalid && installationForm.autoInstallationForm.OutbreakSeverities.$touched"
+                                    class="font-size-12 error-msg-severity text-danger">
+                                    {{viewWidgetVars.FIFTH_PAGE_SECTION_1_SEVERITY_ERROR_MSG}}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="radio">
+                        <div class="cs-radio-item margin-bottom-sm width-100pt">
+                          <input type="radio" id="installAllRadio" name="installAllRadio"
+                            data-ng-model="selectedEnv.autoInstallOutbreaks.installSelectedOutbreaks"
+                            data-ng-value="false">
+                          <label for="installAllRadio"
+                            class="radio-label muted">&nbsp;{{viewWidgetVars.FIFTH_PAGE_SECTION_1_LABLE_INSTALL_ALL}}</label>
+                          <div class="execution-content"
+                            data-ng-if="selectedEnv.autoInstallOutbreaks.installSelectedOutbreaks === false">
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div ng-form="notificationForm" name="notificationForm">
@@ -426,13 +496,10 @@
                       class="solid-border element-secondary-bgcolor padding-20 margin-top-md padding-top-md padding-bottom-md">
                       <div class="font-size-18 muted-80 line-height-1">{{viewWidgetVars.FIFTH_PAGE_SECTION_2_TITLE}}
                       </div><br />
-                      <p class="font-Size-13 muted">
-                        <span>{{viewWidgetVars.FIFTH_PAGE_SECTION_2_DISCRIPTION}}</span>
-                      </p>
                       <label for="fromEmailAddress" class="control-label">{{viewWidgetVars.FIFTH_PAGE_SECTION_2_EMAIL}}
                         <span data-uib-tooltip="{{viewWidgetVars.FIFTH_PAGE_SECTION_2_EMAIL_TOOLTIP}}"
                           data-tooltip-append-to-body="true"><i class="icon icon-information"></i></span></label>
-                      
+
                       <input id="fromEmailAddress" type="text" class="form-control input-sm" name="fromEmailAddress"
                         data-ng-model="selectedEnv.emailAddress" cs-email>
                       <div data-ng-show="installationForm.notificationForm.fromEmailAddress.$invalid">
@@ -464,10 +531,10 @@
       <div class="full-height overflow-auto">
         <div class="display-table fixed-table-layout full-height full-width">
           <div class="full-height display-table-cell vertical-align-middle">
-            <div class="col-md-6 display-flex" style="justify-content: center">
+            <div class="col-md-5 display-flex" style="justify-content: center">
               <img class="img-responsive" src="{{finishInfoGraphics}}">
             </div>
-            <div class="col-md-6 prerequisites-section padding-bottom-25 padding-left-0">
+            <div class="col-md-7 prerequisites-section padding-bottom-25 padding-left-0">
               <div class="font-size-30 muted-80 line-height-1">{{viewWidgetVars.SIXTH_PAGE_TITLE}}</div><br />
               <div
                 class="solid-border element-secondary-bgcolor padding-20 margin-top-md padding-top-md padding-bottom-md">
@@ -484,11 +551,16 @@
                   <p><i class="completed icon icon-approval margin-right-md font-size-16"></i><span
                       class="bold muted">{{viewWidgetVars.SIXTH_PAGE_SUMMARY_HEADING_4}}
                       {{selectedEnv.scheduleFrequency}}</span></p>
-                  <p data-ng-if="selectedEnv.installOutbreakType.length > 0"><i
+                  <p data-ng-if="selectedEnv.autoInstallOutbreaks.installSelectedOutbreaks"><i
                       class="completed icon icon-approval margin-right-md font-size-16"></i><span
                       class="bold muted">{{viewWidgetVars.SIXTH_PAGE_SUMMARY_HEADING_5}}
-                      {{selectedEnv.installOutbreakType.join(', ')}}
-                      {{viewWidgetVars.SIXTH_PAGE_SUMMARY_HEADING_5_1}}</span></p>
+                      {{selectedEnv.autoInstallOutbreaks.installOutbreakType.join(', ')}}
+                      {{viewWidgetVars.SIXTH_PAGE_SUMMARY_HEADING_5_1}}{{selectedEnv.autoInstallOutbreaks.installOutbreaksFromLastXDays}}&nbsp;{{viewWidgetVars.FOURTH_PAGE_SECTION_1_PARAM_2}}</span>
+                  </p>
+                  <p data-ng-if="!selectedEnv.autoInstallOutbreaks.installSelectedOutbreaks"><i
+                      class="completed icon icon-approval margin-right-md font-size-16"></i><span
+                      class="bold muted">{{viewWidgetVars.SIXTH_PAGE_SUMMARY_HEADING_5_2}}</span>
+                  </p>
                   <p data-ng-if="selectedEnv.emailAddress !== null"><i
                       class="completed icon icon-approval margin-right-md font-size-16"></i><span
                       class="bold muted">{{viewWidgetVars.SIXTH_PAGE_SUMMARY_HEADING_6}}
