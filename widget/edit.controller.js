@@ -6,11 +6,11 @@
 (function () {
     angular
         .module('cybersponse')
-        .controller('editOutbreakAlertConfiguration220Ctrl', editOutbreakAlertConfiguration220Ctrl);
+        .controller('editOutbreakAlertConfiguration221Ctrl', editOutbreakAlertConfiguration221Ctrl);
 
-    editOutbreakAlertConfiguration220Ctrl.$inject = ['$scope', '$uibModalInstance', 'config'];
+    editOutbreakAlertConfiguration221Ctrl.$inject = ['$scope', '$uibModalInstance', 'config'];
 
-    function editOutbreakAlertConfiguration220Ctrl($scope, $uibModalInstance, config) {
+    function editOutbreakAlertConfiguration221Ctrl($scope, $uibModalInstance, config) {
         $scope.cancel = cancel;
         $scope.save = save;
         $scope.config = config;

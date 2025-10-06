@@ -22,7 +22,7 @@
         saveSchedule: '='
       },
       controller: 'BaseCtrl',
-      templateUrl: 'widgets/installed/outbreakAlertConfiguration-2.2.0/widgetAssets/html/schedulePlaybook.html',
+      templateUrl: 'widgets/installed/outbreakAlertConfiguration-2.2.1/widgetAssets/html/schedulePlaybook.html',
       link: link
     };
     function link(scope) {

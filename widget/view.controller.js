@@ -6,11 +6,11 @@
 (function () {
     angular
         .module('cybersponse')
-        .controller('outbreakAlertConfiguration220Ctrl', outbreakAlertConfiguration220Ctrl);
+        .controller('outbreakAlertConfiguration221Ctrl', outbreakAlertConfiguration221Ctrl);
 
-    outbreakAlertConfiguration220Ctrl.$inject = ['$scope', '$http', '$q', 'WizardHandler', '$controller', '$state', 'connectorService', 'CommonUtils', '$window', 'toaster', 'currentPermissionsService', '_', '$resource', 'API', 'ALL_RECORDS_SIZE', 'widgetBasePath', '$rootScope', 'websocketService', '$timeout', 'widgetUtilityService', 'PagedCollection', 'Query', 'Modules', 'config'];
+    outbreakAlertConfiguration221Ctrl.$inject = ['$scope', '$http', '$q', 'WizardHandler', '$controller', '$state', 'connectorService', 'CommonUtils', '$window', 'toaster', 'currentPermissionsService', '_', '$resource', 'API', 'ALL_RECORDS_SIZE', 'widgetBasePath', '$rootScope', 'websocketService', '$timeout', 'widgetUtilityService', 'PagedCollection', 'Query', 'Modules', 'config'];
 
-    function outbreakAlertConfiguration220Ctrl($scope, $http, $q, WizardHandler, $controller, $state, connectorService, CommonUtils, $window, toaster, currentPermissionsService, _, $resource, API, ALL_RECORDS_SIZE, widgetBasePath, $rootScope, websocketService, $timeout, widgetUtilityService, PagedCollection, Query, Modules, config) {
+    function outbreakAlertConfiguration221Ctrl($scope, $http, $q, WizardHandler, $controller, $state, connectorService, CommonUtils, $window, toaster, currentPermissionsService, _, $resource, API, ALL_RECORDS_SIZE, widgetBasePath, $rootScope, websocketService, $timeout, widgetUtilityService, PagedCollection, Query, Modules, config) {
         $controller('BaseConnectorCtrl', {
             $scope: $scope
         });

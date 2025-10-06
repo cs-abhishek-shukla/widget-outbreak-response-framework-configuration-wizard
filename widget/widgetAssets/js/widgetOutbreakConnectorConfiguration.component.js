@@ -590,6 +590,6 @@
     controller: ['websocketService', 'CommonUtils', 'DEFAULT_REPO_URL', '$filter', 'currentPermissionsService', '$window', 'fileService', '$scope', '_', 'ModalService', 'connectorService', 'dataIngestionService', 'toaster', '$timeout', '$uibModal', 'CONNECTOR_CONFIG_EXCLUDE_TAGS', '$rootScope', 'translationService',
       widgetOutbreakConnectorConfigurationComponent,
     ],
-    templateUrl: 'widgets/installed/outbreakAlertConfiguration-2.2.0/widgetAssets/html/widgetOutbreakConnectorConfiguration.component.html'
+    templateUrl: 'widgets/installed/outbreakAlertConfiguration-2.2.1/widgetAssets/html/widgetOutbreakConnectorConfiguration.component.html'
   });
 })();
