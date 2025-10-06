@@ -484,7 +484,7 @@
             var url = API.WORKFLOW + 'api/scheduled/?depth=2&format=json&limit=' + ALL_RECORDS_SIZE + '&ordering=-modified&search=Investigate_' + $scope.ingestionDetails.name + '&task=workflow.tasks.periodic_task';
             $resource(url).get({}).$promise.then(function (response) {
                 if (response['hydra:member'] && response['hydra:member'].length > 0) {
-                    $scope.saveSchedules = response['hydra:member'][0];
+                    $scope.saveSchedule = response['hydra:member'][0];
                 }
                 else {
                     toaster.error({ body: 'Investigate_' + $scope.ingestionDetails.name + ' schedule not found' });
