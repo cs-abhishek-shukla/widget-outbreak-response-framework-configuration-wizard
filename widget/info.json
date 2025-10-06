@@ -1,20 +1,20 @@
 {
     "name": "outbreakAlertConfiguration",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "title": "Outbreak Response Framework Configuration Wizard",
     "subTitle": "The Outbreak Response Framework solution pack uses the Outbreak Response Framework Configuration wizard to configure Threat Detection integrations within a FortiSOAR environment. The configuration process includes selecting a Threat Detection integration, such as FortiSIEM or FortiAnalyzer, and defining an investigation schedule for the outbreaks.",
-    "published_date": "1722316900",
+    "published_date": "1759731271",
     "metadata": {
         "pages": [],
         "certified": "Yes",
         "publisher": "Fortinet",
         "snapshots": [
-            "https://repo.fortisoar.fortinet.com/fsr-widgets/outbreakAlertConfiguration-2.2.0/images/config-wizard-01.png",
-            "https://repo.fortisoar.fortinet.com/fsr-widgets/outbreakAlertConfiguration-2.2.0/images/config-wizard-02.png",
-            "https://repo.fortisoar.fortinet.com/fsr-widgets/outbreakAlertConfiguration-2.2.0/images/config-wizard-03.gif",
-            "https://repo.fortisoar.fortinet.com/fsr-widgets/outbreakAlertConfiguration-2.2.0/images/config-wizard-04.png",
-            "https://repo.fortisoar.fortinet.com/fsr-widgets/outbreakAlertConfiguration-2.2.0/images/config-wizard-05.png",
-            "https://repo.fortisoar.fortinet.com/fsr-widgets/outbreakAlertConfiguration-2.2.0/images/config-wizard-06.png"
+            "https://repo.fortisoar.fortinet.com/fsr-widgets/outbreakAlertConfiguration-2.2.1/images/config-wizard-01.png",
+            "https://repo.fortisoar.fortinet.com/fsr-widgets/outbreakAlertConfiguration-2.2.1/images/config-wizard-02.png",
+            "https://repo.fortisoar.fortinet.com/fsr-widgets/outbreakAlertConfiguration-2.2.1/images/config-wizard-03.gif",
+            "https://repo.fortisoar.fortinet.com/fsr-widgets/outbreakAlertConfiguration-2.2.1/images/config-wizard-04.png",
+            "https://repo.fortisoar.fortinet.com/fsr-widgets/outbreakAlertConfiguration-2.2.1/images/config-wizard-05.png",
+            "https://repo.fortisoar.fortinet.com/fsr-widgets/outbreakAlertConfiguration-2.2.1/images/config-wizard-06.png"
         ],
         "standalone": true,
         "description": "The Outbreak Response Framework solution pack uses the Outbreak Response Framework Configuration wizard to configure Threat Detection integrations within a FortiSOAR environment. The configuration process includes selecting a Threat Detection integration, such as FortiSIEM or FortiAnalyzer, and defining an investigation schedule for the outbreaks.",

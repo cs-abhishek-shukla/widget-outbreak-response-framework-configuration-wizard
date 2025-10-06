@@ -18,7 +18,8 @@
       restrict: 'A',
       scope: {
         viewWidgetVars: '<',
-        jsonData: '='
+        jsonData: '=',
+        saveSchedule: '='
       },
       controller: 'BaseCtrl',
       templateUrl: 'widgets/installed/outbreakAlertConfiguration-2.2.0/widgetAssets/html/schedulePlaybook.html',
@@ -52,6 +53,7 @@
 
       scope.params = {
         updating: false,
+        isSaveDisabled: false,
         action: 'Add',
         playbookList: null,
         defaultCronexpression: {
@@ -111,7 +113,7 @@
         }
       });
 
-      function updateCron() {
+      function updateCron(updatedCronSection) {
         var cronstrue = $window.cronstrue;
         scope.cronDescriber = '';
         if (scope.scheduleConfig.crontab.minute !== '' && scope.scheduleConfig.crontab.hour !== '' && scope.scheduleConfig.crontab.day_of_month !== '' && scope.scheduleConfig.crontab.month_of_year !== '' && scope.scheduleConfig.crontab.day_of_week !== '') {
@@ -119,6 +121,9 @@
         }
         scope.params.config.cronName = angular.copy(scope.cronDescriber);
         scope.$emit('scheduleDetails', { 'status': true, 'scheduleId': scope.scheduleConfig.id, 'scheduleFrequency': scope.cronDescriber });
+        if (!scope.scheduleForm.$dirty && updatedCronSection) {
+          scope.scheduleForm.$setDirty();
+        }
       }
 
       function loadScheduleData() {
@@ -211,6 +216,13 @@
         }
       };
 
+      scope.onScheduledChange = function () {
+        if (scope.params.form.scheduled === 'Y') {
+          scope.scheduleForm.$setDirty();
+          scope.updateCron();
+        }
+      };
+
       scope.setCronValue = function (field, key) {
         if (scope.params.form.scheduled === 'N') {
           return;
@@ -246,14 +258,21 @@
         scope.updateCron();
       };
 
+      scope.$watch('scheduleForm.$dirty', function (newVal) {
+        if (newVal) {
+          // Reset isSaveDisabled when the form is dirty (modified)
+          scope.params.isSaveDisabled = false;
+        }
+      });
+
       function save(scheduleForm) {
         if (scheduleForm.$invalid) {
           scheduleForm.$setTouched();
           scheduleForm.$focusOnFirstError();
           return;
         }
+        scope.params.isSaveDisabled = true;
         scope.params.updating = true;
-        scope.scheduleConfig.enabled = true;
         scope.scheduleConfig.kwargs.wf_iri = "/api/3/workflows/" + scope.jsonData.playbook_uuid;
         var priority_payload = {
           "@id": "/api/3/picklists/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
@@ -266,7 +285,9 @@
           "uuid": "2b563c61-ae2c-41c0-a85a-c9709585e3f2",
           "id": 111,
           "importedBy": []
-        }
+        };
+        scope.scheduleConfig.task = "workflow.tasks.periodic_task";
+        scope.scheduleConfig.interval = null;
         scope.scheduleConfig.kwargs.priority = priority_payload;
         scope.scheduleConfig.crontab.timezone = scope.scheduleConfig.kwargs.timezone;
         scope.scheduleConfig.kwargs.createUser = localStorageService.get(API.API_3_BASE + API.CURRENT_ACTOR)['@id'];
@@ -276,13 +297,17 @@
         }
         SchedulesService.saveSchedule(scheduleData).then(function (data) {
           scope.scheduleConfig.id = data.id;
+          scope.saveSchedule = data;
           scope.status = true;
           scope.$emit('scheduleDetails', { 'status': scope.status, 'scheduleId': scope.scheduleConfig.id, 'scheduleFrequency': scope.cronDescriber });
           scope.params.updating = false;
-          _isScheduleModified = true;
+          scope.params.isSaveDisabled = true;
           scope.scheduleForm.$setPristine();
-        }
-        );
+        }).catch(function (error) {
+          console.error('Error while saving schedule:', error);
+          scope.params.updating = false;
+          scope.params.isSaveDisabled = false;
+        });
       }
     }
     return directive;
